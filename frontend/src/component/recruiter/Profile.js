@@ -158,6 +158,16 @@ const Profile = (props) => {
               </Grid>
               <Grid item>
                 <TextField
+                  label="E-mail"
+                  value={localStorage.getItem("email")}
+                  className={classes.inputBox}
+                  variant="outlined"
+                  fullWidth
+                  style={{ width: "100%" }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
                   label="Institution Name"
                   value={profileDetails.uniname}
                   onChange={(event) =>

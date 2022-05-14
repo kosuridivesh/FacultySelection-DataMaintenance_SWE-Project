@@ -337,6 +337,15 @@ const Profile = (props) => {
                   fullWidth
                 />
               </Grid>
+              <Grid item>
+                <TextField
+                  label="E-mail"
+                  value={localStorage.getItem("email")}
+                  className={classes.inputBox}
+                  variant="outlined"
+                  fullWidth
+                />
+              </Grid>
               <MultifieldInput
                 education={education}
                 setEducation={setEducation}

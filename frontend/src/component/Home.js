@@ -12,12 +12,12 @@ import {
   Modal,
   Slider,
   FormControlLabel,
-  FormGroup,
+  // FormGroup,
   MenuItem,
   Checkbox,
 } from "@material-ui/core";
-import Rating from "@material-ui/lab/Rating";
-import Pagination from "@material-ui/lab/Pagination";
+// import Rating from "@material-ui/lab/Rating";
+// import Pagination from "@material-ui/lab/Pagination";
 import axios from "axios";
 import SearchIcon from "@material-ui/icons/Search";
 import FilterListIcon from "@material-ui/icons/FilterList";
