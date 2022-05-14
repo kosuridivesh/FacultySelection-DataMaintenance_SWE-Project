@@ -15,7 +15,7 @@ import Applications from "./component/applicant/Applications.js";
 import JobApplications from "./component/recruiter/JobApplications";
 import RecruiterProfile from "./component/recruiter/Profile";
 import MessagePopup from "./lib/MessagePopup";
-import isAuth, { userType } from "./lib/isAuth";
+import { userType } from "./lib/isAuth";
 
 const useStyles = makeStyles((theme) => ({
   body: {

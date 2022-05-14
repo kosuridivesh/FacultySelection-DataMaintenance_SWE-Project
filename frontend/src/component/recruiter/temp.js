@@ -1,20 +1,23 @@
+const nodemailer = require("nodemailer");
+
 const express = require("express");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const authKeys = require("../lib/authKeys");
-const nodemailer = require("nodemailer");
-const { v4: uuidv4 } = require("uuid");
+
 const User = require("../db/User");
 const JobApplicant = require("../db/JobApplicant");
 const Recruiter = require("../db/Recruiter");
+// const UserOTPVerification = require("../db/UserOTPVerification")
 
 const router = express.Router();
+// const bcrypt = require("bcrypt");
 
 let transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "aadsteam4@gmail.com",
-    pass: "dreamteam@4",
+    user: "facultyportal05@gmail.com",
+    pass: "faculty05",
   },
 });
 
@@ -29,6 +32,7 @@ router.post("/signup", (req, res) => {
   user
     .save()
     .then(() => {
+      sendOTPVerficationEmail(data.email);
       const userDetails =
         user.type == "recruiter"
           ? new Recruiter({
@@ -89,14 +93,30 @@ router.post("/login", (req, res, next) => {
       }
       // Token
       const token = jwt.sign({ _id: user._id }, authKeys.jwtSecretKey);
-      // console.log(user);
       res.json({
         token: token,
-        email: user.email,
         type: user.type,
       });
     }
   )(req, res, next);
 });
+
+const sendOTPVerficationEmail = async (email) => {
+  try {
+    // const otp = (Math.floor(1000 + Math.random()*9000));
+    const mailOptions = {
+      from: "facultyportal05@gmail.com",
+      to: email,
+      subject: "Account Created",
+      html: `<p>hi</p>`,
+    };
+    transporter.sendMail(mailOptions);
+  } catch (error) {
+    res.json({
+      status: "Failed",
+      message: error.message,
+    });
+  }
+};
 
 module.exports = router;

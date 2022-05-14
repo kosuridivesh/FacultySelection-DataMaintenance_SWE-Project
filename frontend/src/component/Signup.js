@@ -240,13 +240,14 @@ const Login = (props) => {
       axios
         .post(apiList.signup, updatedDetails)
         .then((response) => {
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("type", response.data.type);
-          setLoggedin(isAuth());
+          // localStorage.setItem("token", response.data.token);
+          // localStorage.setItem("type", response.data.type);
+          // setLoggedin(isAuth());
           setPopup({
             open: true,
             severity: "success",
-            message: "Logged in successfully",
+            message: "Sign-Up Successful! Please authenticate your e-mail!",
+            // message: "Logged in successfully",
           });
           // console.log(response);
         })
@@ -310,13 +311,14 @@ const Login = (props) => {
       axios
         .post(apiList.signup, updatedDetails)
         .then((response) => {
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("type", response.data.type);
-          setLoggedin(isAuth());
+          // localStorage.setItem("token", response.data.token);
+          // localStorage.setItem("type", response.data.type);
+          // setLoggedin(isAuth());
           setPopup({
             open: true,
             severity: "success",
-            message: "Logged in successfully",
+            message: "Sign-Up Successful! Please authenticate your e-mail!",
+            // message: "Logged in successfully",
           });
           // console.log(response);
         })

@@ -18,7 +18,7 @@ let schema = new mongoose.Schema(
         },
         startYear: {
           type: Number,
-          min: 1930,
+          min: 1970,
           max: new Date().getFullYear(),
           required: true,
           validate: Number.isInteger,
@@ -39,17 +39,6 @@ let schema = new mongoose.Schema(
       },
     ],
     skills: [String],
-    rating: {
-      type: Number,
-      max: 5.0,
-      default: -1.0,
-      validate: {
-        validator: function (v) {
-          return v >= -1.0 && v <= 5.0;
-        },
-        msg: "Invalid rating",
-      },
-    },
     resume: {
       type: String,
     },

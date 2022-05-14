@@ -111,22 +111,11 @@ let schema = new mongoose.Schema(
         },
         {
           validator: function (value) {
-            return value >= 0;
+            return value > 0;
           },
-          msg: "Salary should be positive",
+          msg: "Salary should be positive ( > 0)",
         },
       ],
-    },
-    rating: {
-      type: Number,
-      max: 5.0,
-      default: -1.0,
-      validate: {
-        validator: function (v) {
-          return v >= -1.0 && v <= 5.0;
-        },
-        msg: "Invalid rating",
-      },
     },
   },
   { collation: { locale: "en" } }

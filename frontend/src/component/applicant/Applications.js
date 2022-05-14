@@ -237,7 +237,7 @@ const Applications = (props) => {
         },
       })
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         setApplications(response.data);
       })
       .catch((err) => {

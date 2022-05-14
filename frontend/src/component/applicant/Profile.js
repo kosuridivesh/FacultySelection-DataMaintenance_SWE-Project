@@ -18,6 +18,8 @@ import { SetPopupContext } from "../../App.js";
 
 import apiList, { server } from "../../lib/apiList";
 
+const gcpserver = "https://storage.googleapis.com/arvindbucketforse";
+
 const useStyles = makeStyles((theme) => ({
   body: {
     height: "inherit",
@@ -165,7 +167,11 @@ const Profile = (props) => {
 
   const getResume = () => {
     if (profileDetails.resume && profileDetails.resume !== "") {
-      const address = `${server}${profileDetails.resume}`;
+      // https://storage.googleapis.com/arvindbucketforse/3f64b71d-31cb-44b9-b3e1-202a8e389093.pdf
+      // const address = `${server}${profileDetails.resume}`;
+      console.log(profileDetails.resume);
+      let name = profileDetails.resume.split("/")[3];
+      const address = `${gcpserver}/${name}`;
       // console.log(address);
       axios(address, {
         method: "GET",
@@ -304,7 +310,8 @@ const Profile = (props) => {
           }}
         >
           <Avatar
-            src={`${server}${profileDetails.profile}`}
+            // src={`${server}${profileDetails.profile}`}
+            src={`${gcpserver}/${profileDetails.profile.split("/")[3]}`}
             className={classes.avatar}
           />
         </Grid>

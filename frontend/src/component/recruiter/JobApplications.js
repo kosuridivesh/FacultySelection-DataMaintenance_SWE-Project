@@ -4,6 +4,7 @@ import {
   Chip,
   Grid,
   IconButton,
+  TextField,
   makeStyles,
   Paper,
   Typography,
@@ -14,12 +15,16 @@ import {
 } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import FilterListIcon from "@material-ui/icons/FilterList";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 
 import { SetPopupContext } from "../../App";
 
 import apiList, { server } from "../../lib/apiList";
+
+const gcpserver = "https://storage.googleapis.com/arvindbucketforse";
 
 const useStyles = makeStyles((theme) => ({
   body: {
@@ -38,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
     margin: "20px 0",
     boxSizing: "border-box",
     width: "100%",
+  },
+  inputBox: {
+    // background: "#FFF",
+    width: "400px",
   },
   popupDialog: {
     height: "100%",
@@ -332,14 +341,17 @@ const FilterPopup = (props) => {
 
 const ApplicationTile = (props) => {
   const classes = useStyles();
-  const { application, getData } = props;
+  const { application, getData, testLink } = props;
   const setPopup = useContext(SetPopupContext);
   const [open, setOpen] = useState(false);
+  const [sop, setSop] = useState("");
+  const [emailid, setEmail] = useState("");
 
   const appliedOn = new Date(application.dateOfApplication);
 
   const handleClose = () => {
     setOpen(false);
+    setSop("");
   };
 
   const colorSet = {
@@ -352,12 +364,148 @@ const ApplicationTile = (props) => {
     finished: "#4EA5D9",
   };
 
+  const handleApply = (status) => {
+    // console.log(job._id);
+    console.log(sop);
+    axios
+      .post(
+        apiList.rec,
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+        //   },
+        // },
+        { userId: application.userId }
+      )
+      .then((response) => {
+        console.log("res", response.data.email);
+        let em = response.data.email;
+        setEmail(response.data.email);
+        console.log("state", emailid);
+        console.log("hey", em);
+        const sendData = {
+          email: em,
+          message: sop,
+        };
+        const mailAddress = `${apiList.sendaccmail}`;
+        axios
+          .post(mailAddress, sendData)
+          .then((response) => {
+            if (status == "accepted") {
+              const address = `${apiList.applications}/${application._id}`;
+              const statusData = {
+                status: status,
+                dateOfJoining: new Date().toISOString(),
+              };
+              axios
+                .put(address, statusData, {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                })
+                .then((response) => {
+                  handleClose();
+                  setPopup({
+                    open: true,
+                    severity: "success",
+                    message: response.data.message,
+                  });
+                  getData();
+                })
+                .catch((err) => {
+                  setPopup({
+                    open: true,
+                    severity: "error",
+                    message: err.response.data.message,
+                  });
+                  console.log(err.response);
+                });
+            }
+            // setPopup({
+            //   open: true,
+            //   severity: "success",
+            //   message: "User Accepted & notified!",
+            // });
+          })
+          .catch((err) => {
+            setPopup({
+              open: true,
+              severity: "error",
+              message: err.response.data.message,
+            });
+            console.log(err.response);
+          });
+      })
+      .catch((err) => {
+        setPopup({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+        console.log(err.response);
+      });
+    // handleClose();
+    // try {
+    //   // const otp = (Math.floor(1000 + Math.random()*9000));
+    //   const mailOptions = {
+    //     from: "facultyportal05@gmail.com",
+    //     to: "arvindram25@gmail.com",
+    //     subject: "Account Created",
+    //     html: `<p>Hello hi bye</p>`,
+    //   };
+    //   transporter.sendMail(mailOptions);
+    // } catch (error) {
+    //   setPopup({
+    //     open: true,
+    //     severity: "failed",
+    //     message: error.message,
+    //   });
+    // }
+    // setPopup({
+    //   open: true,
+    //   severity: "success",
+    //   message: sop,
+    // });
+
+    // axios
+    //   .post(
+    //     `${apiList.jobs}/${job._id}/applications`,
+    //     {
+    //       sop: sop,
+    //     },
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //       },
+    //     }
+    //   )
+    //   .then((response) => {
+    //     setPopup({
+    //       open: true,
+    //       severity: "success",
+    //       message: response.data.message,
+    //     });
+    //     handleClose();
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.response);
+    //     setPopup({
+    //       open: true,
+    //       severity: "error",
+    //       message: err.response.data.message,
+    //     });
+    //     handleClose();
+    //   });
+  };
+
   const getResume = () => {
     if (
       application.jobApplicant.resume &&
       application.jobApplicant.resume !== ""
     ) {
-      const address = `${server}${application.jobApplicant.resume}`;
+      // const address = `${server}${application.jobApplicant.resume}`;
+      let name = application.jobApplicant.resume.split("/")[3];
+      const address = `${gcpserver}/${name}`;
       // console.log(address);
       axios(address, {
         method: "GET",
@@ -370,11 +518,11 @@ const ApplicationTile = (props) => {
         })
         .catch((error) => {
           console.log(error);
-          setPopup({
-            open: true,
-            severity: "error",
-            message: "Error",
-          });
+          // setPopup({
+          //   open: true,
+          //   severity: "error",
+          //   message: "Error",
+          // });
         });
     } else {
       setPopup({
@@ -386,24 +534,74 @@ const ApplicationTile = (props) => {
   };
 
   const updateStatus = (status) => {
-    const address = `${apiList.applications}/${application._id}`;
-    const statusData = {
-      status: status,
-      dateOfJoining: new Date().toISOString(),
-    };
+    console.log(testLink);
     axios
-      .put(address, statusData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
+      .post(
+        apiList.rec,
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+        //   },
+        // },
+        { userId: application.userId }
+      )
       .then((response) => {
-        setPopup({
-          open: true,
-          severity: "success",
-          message: response.data.message,
-        });
-        getData();
+        console.log(response.data.email);
+        let em = response.data.email;
+        setEmail(response.data.email);
+        console.log(emailid);
+        console.log("hey", em);
+        const sendData = {
+          email: em,
+          testLink: testLink,
+        };
+        const mailAddress = `${apiList.sendmail}`;
+        axios
+          .post(mailAddress, sendData)
+          .then((response) => {
+            if (status == "shortlisted") {
+              const address = `${apiList.applications}/${application._id}`;
+              const statusData = {
+                status: status,
+                dateOfJoining: new Date().toISOString(),
+              };
+              axios
+                .put(address, statusData, {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                })
+                .then((response) => {
+                  setPopup({
+                    open: true,
+                    severity: "success",
+                    message: response.data.message,
+                  });
+                  getData();
+                })
+                .catch((err) => {
+                  setPopup({
+                    open: true,
+                    severity: "error",
+                    message: err.response.data.message,
+                  });
+                  console.log(err.response);
+                });
+            }
+            setPopup({
+              open: true,
+              severity: "success",
+              message: "User notified!",
+            });
+          })
+          .catch((err) => {
+            setPopup({
+              open: true,
+              severity: "error",
+              message: err.response.data.message,
+            });
+            console.log(err.response);
+          });
       })
       .catch((err) => {
         setPopup({
@@ -413,6 +611,7 @@ const ApplicationTile = (props) => {
         });
         console.log(err.response);
       });
+    // console.log(application);
   };
 
   const buttonSet = {
@@ -425,7 +624,13 @@ const ApplicationTile = (props) => {
               background: colorSet["shortlisted"],
               color: "#ffffff",
             }}
-            onClick={() => updateStatus("shortlisted")}
+            // onClick={() => {
+            //   setOpen(true);
+            // }}
+            onClick={() => {
+              // setOpen(true);
+              updateStatus("shortlisted");
+            }}
           >
             Shortlist
           </Button>
@@ -453,7 +658,9 @@ const ApplicationTile = (props) => {
               background: colorSet["accepted"],
               color: "#ffffff",
             }}
-            onClick={() => updateStatus("accepted")}
+            onClick={() => {
+              setOpen(true);
+            }}
           >
             Accept
           </Button>
@@ -547,7 +754,9 @@ const ApplicationTile = (props) => {
           }}
         >
           <Avatar
-            src={`${server}${application.jobApplicant.profile}`}
+            src={`${gcpserver}/${
+              application.jobApplicant.profile.split("/")[3]
+            }`}
             className={classes.avatar}
           />
         </Grid>
@@ -583,7 +792,11 @@ const ApplicationTile = (props) => {
           </Grid>
           <Grid item>
             {application.jobApplicant.skills.map((skill) => (
-              <Chip label={skill} style={{ marginRight: "2px" }} />
+              <Chip
+                key={uuidv4()}
+                label={skill}
+                style={{ marginRight: "2px" }}
+              />
             ))}
           </Grid>
         </Grid>
@@ -611,6 +824,45 @@ const ApplicationTile = (props) => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
+            minWidth: "50%",
+            alignItems: "center",
+          }}
+        >
+          <TextField
+            label="Write a message for the candidate to accept for on-site interview..."
+            multiline
+            rows={8}
+            style={{ width: "100%", marginBottom: "30px" }}
+            variant="outlined"
+            value={sop}
+            onChange={(event) => {
+              if (
+                event.target.value.split(" ").filter(function (n) {
+                  return n != "";
+                }).length <= 250
+              ) {
+                setSop(event.target.value);
+              }
+            }}
+          />
+          <Button
+            variant="contained"
+            color="secondary"
+            style={{ padding: "10px 50px" }}
+            onClick={() => handleApply("accepted")}
+          >
+            Accept & send mail
+          </Button>
+        </Paper>
+      </Modal>
+      {/* <Modal open={open} onClose={handleClose} className={classes.popupDialog}>
+        <Paper
+          style={{
+            padding: "20px",
+            outline: "none",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
             minWidth: "30%",
             alignItems: "center",
           }}
@@ -624,16 +876,18 @@ const ApplicationTile = (props) => {
             Submit
           </Button>
         </Paper>
-      </Modal>
+      </Modal> */}
     </Paper>
   );
 };
 
 const JobApplications = (props) => {
+  const classes = useStyles();
   const setPopup = useContext(SetPopupContext);
   const [applications, setApplications] = useState([]);
   const { jobId } = useParams();
   const [filterOpen, setFilterOpen] = useState(false);
+  const [testLink, settestLink] = useState("");
   const [searchOptions, setSearchOptions] = useState({
     status: {
       all: false,
@@ -731,9 +985,18 @@ const JobApplications = (props) => {
           <Typography variant="h2">Applicants</Typography>
         </Grid>
         <Grid item>
-          {/* <IconButton onClick={() => setFilterOpen(true)}>
+          <IconButton onClick={() => setFilterOpen(true)}>
             <FilterListIcon />
-          </IconButton> */}
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <TextField
+            label="Enter your test link here: "
+            value={testLink}
+            onChange={(event) => settestLink(event.target.value)}
+            className={classes.inputBox}
+            variant="outlined"
+          />
         </Grid>
         <Grid
           container
@@ -746,9 +1009,15 @@ const JobApplications = (props) => {
         >
           {applications.length > 0 ? (
             applications.map((obj) => (
-              <Grid item>
-                {/* {console.log(obj)} */}
-                <ApplicationTile application={obj} getData={getData} />
+              <Grid item key={obj.userId}>
+                {
+                  <ApplicationTile
+                    key={uuidv4()}
+                    application={obj}
+                    getData={getData}
+                    testLink={testLink}
+                  />
+                }
               </Grid>
             ))
           ) : (

@@ -4,25 +4,22 @@ require("mongoose-type-email");
 
 let schema = new mongoose.Schema(
   {
-    email: {
-      type: mongoose.SchemaTypes.Email,
-      unique: true,
-      lowercase: true,
-      required: true,
-    },
-    password: {
+    userId: {
       type: String,
       required: true,
     },
-    type: {
+    uniqueString: {
       type: String,
-      enum: ["recruiter", "applicant"],
       required: true,
     },
-    // verified: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+    createdAt: {
+      type: Date,
+      required: true,
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+    },
   },
   { collation: { locale: "en" } }
 );
@@ -63,4 +60,4 @@ schema.methods.login = function (password) {
   });
 };
 
-module.exports = mongoose.model("UserAuth", schema);
+module.exports = mongoose.model("UserVerification", schema);

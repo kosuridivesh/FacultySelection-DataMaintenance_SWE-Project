@@ -31,7 +31,7 @@ const Navbar = (props) => {
   };
 
   return (
-    <AppBar position="fixed" style={{ background: "#112D4E", opacity: "0.9" }}>
+    <AppBar position="fixed" style={{ background: "#112D4E", opacity: "1" }}>
       <Toolbar>
         <Typography variant="h5" className={classes.title}>
           {!isAuth() ? (
