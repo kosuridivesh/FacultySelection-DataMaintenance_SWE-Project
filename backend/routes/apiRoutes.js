@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const jwtAuth = require("../lib/jwtAuth");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 const User = require("../db/User");
 const JobApplicant = require("../db/JobApplicant");
@@ -20,6 +21,85 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+router.get("/authmail", async (req, res) => {
+  const token = req.query.token;
+  if (token) {
+    // console.log("token available: ", token);
+    User.findOne({ _id: token })
+      .then((userData) => {
+        if (userData === null) {
+          res.status(404).json({
+            message: "User does not exist",
+          });
+          return;
+        }
+        // console.log(userData);
+        userData.verified = true;
+        userData
+          .save()
+          .then(() => {
+            res.status(200).json({
+              message: "E-mail authenticated!",
+            });
+          })
+          .catch((err) => {
+            res.status(404).json({
+              message: "Could not authenticate e-mail!",
+            });
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        res.status(400).json(err);
+      });
+    // try {
+    //   // authmail(email, testLink);
+    //   res.json({});
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  } else {
+    res.json({
+      status: "Failed",
+      message: "Invalid token!",
+    });
+  }
+});
+
+const signupmail = async (email, token, server, userId) => {
+  let url = `${server}?token=${userId}`;
+  // console.log("auth URL : ", url);
+  try {
+    const mailOptions = {
+      from: "facultyportal05@gmail.com",
+      to: email,
+      subject: "FacOutLook - Registration",
+      html: `<h4>Your account for ${email} has been created!</h4>
+      <p>To authenticate your email, </p> <a href ="${url}">Click here</a>      
+      <p>-From Team FacOutLook</p>`,
+    };
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+router.post("/signupmail", (req, res) => {
+  let email = req.body.email;
+  let token = req.body.token;
+  let userId = req.body.userId;
+  let server = req.body.server;
+  try {
+    signupmail(email, token, server, userId);
+    res.json({});
+  } catch (error) {
+    res.json({
+      status: "Failed",
+      message: error.message,
+    });
+  }
+});
+
 const sendmail = async (email, testLink) => {
   try {
     const mailOptions = {
@@ -28,7 +108,7 @@ const sendmail = async (email, testLink) => {
       subject: "FacOutLook - Shortlisted",
       html: `<p>You have been shortlisted. Your Test Link is ${testLink}</p>`,
     };
-    transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
   } catch (error) {
     console.log(error.message);
   }
@@ -48,34 +128,6 @@ router.post("/sendmail", (req, res) => {
   }
 });
 
-const signupmail = async (email) => {
-  try {
-    const mailOptions = {
-      from: "facultyportal05@gmail.com",
-      to: email,
-      subject: "FacOutLook - Registration",
-      html: `<h4>Your account for ${email} has been created!</h4>
-            <p>-From Team FacOutLook</p>`,
-    };
-    transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-router.post("/signupmail", (req, res) => {
-  let email = req.body.email;
-  try {
-    signupmail(email);
-    res.json({});
-  } catch (error) {
-    res.json({
-      status: "Failed",
-      message: error.message,
-    });
-  }
-});
-
 const sendaccmail = async (email, message) => {
   try {
     const mailOptions = {
@@ -84,7 +136,7 @@ const sendaccmail = async (email, message) => {
       subject: "FacOutLook - Accepted",
       html: `<p> Congratulations on getting accepted. ${message} </p>`,
     };
-    transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
   } catch (error) {
     console.log(error.message);
   }
@@ -1093,368 +1145,5 @@ router.get("/applicants", jwtAuth, (req, res) => {
     });
   }
 });
-
-// to add or update a rating [todo: test]
-// router.put("/rating", jwtAuth, (req, res) => {
-//   const user = req.user;
-//   const data = req.body;
-//   if (user.type === "recruiter") {
-//     // can rate applicant
-//     Rating.findOne({
-//       senderId: user._id,
-//       receiverId: data.applicantId,
-//       category: "applicant",
-//     })
-//       .then((rating) => {
-//         if (rating === null) {
-//           // console.log("new rating");
-//           Application.countDocuments({
-//             userId: data.applicantId,
-//             recruiterId: user._id,
-//             status: {
-//               $in: ["accepted", "finished"],
-//             },
-//           })
-//             .then((acceptedApplicant) => {
-//               if (acceptedApplicant > 0) {
-//                 // add a new rating
-
-//                 rating = new Rating({
-//                   category: "applicant",
-//                   receiverId: data.applicantId,
-//                   senderId: user._id,
-//                   rating: data.rating,
-//                 });
-
-//                 rating
-//                   .save()
-//                   .then(() => {
-//                     // get the average of ratings
-//                     Rating.aggregate([
-//                       {
-//                         $match: {
-//                           receiverId: mongoose.Types.ObjectId(data.applicantId),
-//                           category: "applicant",
-//                         },
-//                       },
-//                       {
-//                         $group: {
-//                           _id: {},
-//                           average: { $avg: "$rating" },
-//                         },
-//                       },
-//                     ])
-//                       .then((result) => {
-//                         // update the user's rating
-//                         if (result === null) {
-//                           res.status(400).json({
-//                             message: "Error while calculating rating",
-//                           });
-//                           return;
-//                         }
-//                         const avg = result[0].average;
-
-//                         JobApplicant.findOneAndUpdate(
-//                           {
-//                             userId: data.applicantId,
-//                           },
-//                           {
-//                             $set: {
-//                               rating: avg,
-//                             },
-//                           }
-//                         )
-//                           .then((applicant) => {
-//                             if (applicant === null) {
-//                               res.status(400).json({
-//                                 message:
-//                                   "Error while updating applicant's average rating",
-//                               });
-//                               return;
-//                             }
-//                             res.json({
-//                               message: "Rating added successfully",
-//                             });
-//                           })
-//                           .catch((err) => {
-//                             res.status(400).json(err);
-//                           });
-//                       })
-//                       .catch((err) => {
-//                         res.status(400).json(err);
-//                       });
-//                   })
-//                   .catch((err) => {
-//                     res.status(400).json(err);
-//                   });
-//               } else {
-//                 // you cannot rate
-//                 res.status(400).json({
-//                   message:
-//                     "Applicant didn't worked under you. Hence you cannot give a rating.",
-//                 });
-//               }
-//             })
-//             .catch((err) => {
-//               res.status(400).json(err);
-//             });
-//         } else {
-//           rating.rating = data.rating;
-//           rating
-//             .save()
-//             .then(() => {
-//               // get the average of ratings
-//               Rating.aggregate([
-//                 {
-//                   $match: {
-//                     receiverId: mongoose.Types.ObjectId(data.applicantId),
-//                     category: "applicant",
-//                   },
-//                 },
-//                 {
-//                   $group: {
-//                     _id: {},
-//                     average: { $avg: "$rating" },
-//                   },
-//                 },
-//               ])
-//                 .then((result) => {
-//                   // update the user's rating
-//                   if (result === null) {
-//                     res.status(400).json({
-//                       message: "Error while calculating rating",
-//                     });
-//                     return;
-//                   }
-//                   const avg = result[0].average;
-//                   JobApplicant.findOneAndUpdate(
-//                     {
-//                       userId: data.applicantId,
-//                     },
-//                     {
-//                       $set: {
-//                         rating: avg,
-//                       },
-//                     }
-//                   )
-//                     .then((applicant) => {
-//                       if (applicant === null) {
-//                         res.status(400).json({
-//                           message:
-//                             "Error while updating applicant's average rating",
-//                         });
-//                         return;
-//                       }
-//                       res.json({
-//                         message: "Rating updated successfully",
-//                       });
-//                     })
-//                     .catch((err) => {
-//                       res.status(400).json(err);
-//                     });
-//                 })
-//                 .catch((err) => {
-//                   res.status(400).json(err);
-//                 });
-//             })
-//             .catch((err) => {
-//               res.status(400).json(err);
-//             });
-//         }
-//       })
-//       .catch((err) => {
-//         res.status(400).json(err);
-//       });
-//   } else {
-//     // applicant can rate job
-//     Rating.findOne({
-//       senderId: user._id,
-//       receiverId: data.jobId,
-//       category: "job",
-//     })
-//       .then((rating) => {
-//         // console.log(user._id);
-//         // console.log(data.jobId);
-//         // console.log(rating);
-//         if (rating === null) {
-//           // console.log(rating);
-//           Application.countDocuments({
-//             userId: user._id,
-//             jobId: data.jobId,
-//             status: {
-//               $in: ["accepted", "finished"],
-//             },
-//           })
-//             .then((acceptedApplicant) => {
-//               if (acceptedApplicant > 0) {
-//                 // add a new rating
-
-//                 rating = new Rating({
-//                   category: "job",
-//                   receiverId: data.jobId,
-//                   senderId: user._id,
-//                   rating: data.rating,
-//                 });
-
-//                 rating
-//                   .save()
-//                   .then(() => {
-//                     // get the average of ratings
-//                     Rating.aggregate([
-//                       {
-//                         $match: {
-//                           receiverId: mongoose.Types.ObjectId(data.jobId),
-//                           category: "job",
-//                         },
-//                       },
-//                       {
-//                         $group: {
-//                           _id: {},
-//                           average: { $avg: "$rating" },
-//                         },
-//                       },
-//                     ])
-//                       .then((result) => {
-//                         if (result === null) {
-//                           res.status(400).json({
-//                             message: "Error while calculating rating",
-//                           });
-//                           return;
-//                         }
-//                         const avg = result[0].average;
-//                         Job.findOneAndUpdate(
-//                           {
-//                             _id: data.jobId,
-//                           },
-//                           {
-//                             $set: {
-//                               rating: avg,
-//                             },
-//                           }
-//                         )
-//                           .then((foundJob) => {
-//                             if (foundJob === null) {
-//                               res.status(400).json({
-//                                 message:
-//                                   "Error while updating job's average rating",
-//                               });
-//                               return;
-//                             }
-//                             res.json({
-//                               message: "Rating added successfully",
-//                             });
-//                           })
-//                           .catch((err) => {
-//                             res.status(400).json(err);
-//                           });
-//                       })
-//                       .catch((err) => {
-//                         res.status(400).json(err);
-//                       });
-//                   })
-//                   .catch((err) => {
-//                     res.status(400).json(err);
-//                   });
-//               } else {
-//                 // you cannot rate
-//                 res.status(400).json({
-//                   message:
-//                     "You haven't worked for this job. Hence you cannot give a rating.",
-//                 });
-//               }
-//             })
-//             .catch((err) => {
-//               res.status(400).json(err);
-//             });
-//         } else {
-//           // update the rating
-//           rating.rating = data.rating;
-//           rating
-//             .save()
-//             .then(() => {
-//               // get the average of ratings
-//               Rating.aggregate([
-//                 {
-//                   $match: {
-//                     receiverId: mongoose.Types.ObjectId(data.jobId),
-//                     category: "job",
-//                   },
-//                 },
-//                 {
-//                   $group: {
-//                     _id: {},
-//                     average: { $avg: "$rating" },
-//                   },
-//                 },
-//               ])
-//                 .then((result) => {
-//                   if (result === null) {
-//                     res.status(400).json({
-//                       message: "Error while calculating rating",
-//                     });
-//                     return;
-//                   }
-//                   const avg = result[0].average;
-//                   // console.log(avg);
-
-//                   Job.findOneAndUpdate(
-//                     {
-//                       _id: data.jobId,
-//                     },
-//                     {
-//                       $set: {
-//                         rating: avg,
-//                       },
-//                     }
-//                   )
-//                     .then((foundJob) => {
-//                       if (foundJob === null) {
-//                         res.status(400).json({
-//                           message: "Error while updating job's average rating",
-//                         });
-//                         return;
-//                       }
-//                       res.json({
-//                         message: "Rating added successfully",
-//                       });
-//                     })
-//                     .catch((err) => {
-//                       res.status(400).json(err);
-//                     });
-//                 })
-//                 .catch((err) => {
-//                   res.status(400).json(err);
-//                 });
-//             })
-//             .catch((err) => {
-//               res.status(400).json(err);
-//             });
-//         }
-//       })
-//       .catch((err) => {
-//         res.status(400).json(err);
-//       });
-//   }
-// });
-
-// // get personal rating
-// router.get("/rating", jwtAuth, (req, res) => {
-//   const user = req.user;
-//   Rating.findOne({
-//     senderId: user._id,
-//     receiverId: req.query.id,
-//     category: user.type === "recruiter" ? "applicant" : "job",
-//   }).then((rating) => {
-//     if (rating === null) {
-//       res.json({
-//         rating: -1,
-//       });
-//       return;
-//     }
-//     res.json({
-//       rating: rating.rating,
-//     });
-//   });
-// });
 
 module.exports = router;

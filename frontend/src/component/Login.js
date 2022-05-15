@@ -7,7 +7,7 @@ import PasswordInput from "../lib/PasswordInput";
 import EmailInput from "../lib/EmailInput";
 import { SetPopupContext } from "../App";
 
-import apiList from "../lib/apiList";
+import apiList, { server } from "../lib/apiList";
 import isAuth from "../lib/isAuth";
 
 const useStyles = makeStyles((theme) => ({
@@ -74,16 +74,44 @@ const Login = (props) => {
       axios
         .post(apiList.login, loginDetails)
         .then((response) => {
-          // console.log(response);
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("email", response.data.email);
-          localStorage.setItem("type", response.data.type);
-          setLoggedin(isAuth());
-          setPopup({
-            open: true,
-            severity: "success",
-            message: "Logged in successfully",
-          });
+          // console.log(response.data.userId);
+          if (response.data.verified) {
+            // if (true) {
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("email", response.data.email);
+            localStorage.setItem("type", response.data.type);
+            setLoggedin(isAuth());
+            setPopup({
+              open: true,
+              severity: "success",
+              message: "Logged in successfully",
+            });
+          } else {
+            axios
+              .post(apiList.signupmail, {
+                email: response.data.email,
+                token: response.data.token,
+                server: apiList.authmail,
+                userId: response.data.userId,
+              })
+              .then((res) => {
+                setPopup({
+                  open: true,
+                  severity: "error",
+                  message:
+                    "E-mail unauthenticated! Go to your e-mail to authenticate!",
+                  // message: "Signed up & Logged in successfully",
+                });
+              })
+              .catch((err) => {
+                setPopup({
+                  open: true,
+                  severity: "error",
+                  message: err.response.data.message,
+                });
+                console.log(err.response);
+              });
+          }
         })
         .catch((err) => {
           setPopup({

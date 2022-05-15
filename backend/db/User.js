@@ -19,10 +19,10 @@ let schema = new mongoose.Schema(
       enum: ["recruiter", "applicant"],
       required: true,
     },
-    // verified: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { collation: { locale: "en" } }
 );

@@ -21,7 +21,7 @@ import EmailInput from "../lib/EmailInput";
 import FileUploadInput from "../lib/FileUploadInput";
 import { SetPopupContext } from "../App";
 
-import apiList from "../lib/apiList";
+import apiList, { server } from "../lib/apiList";
 import isAuth from "../lib/isAuth";
 
 const useStyles = makeStyles((theme) => ({
@@ -241,17 +241,23 @@ const Login = (props) => {
         .post(apiList.signup, updatedDetails)
         .then((response) => {
           axios
-            .post(apiList.signupmail, { email: response.data.email })
+            .post(apiList.signupmail, {
+              email: response.data.email,
+              token: response.data.token,
+              server: apiList.authmail,
+              userId: response.data.userId,
+            })
             .then((res) => {
-              localStorage.setItem("token", response.data.token);
-              localStorage.setItem("type", response.data.type);
-              localStorage.setItem("email", response.data.email);
-              setLoggedin(isAuth());
+              // localStorage.setItem("token", response.data.token);
+              // localStorage.setItem("type", response.data.type);
+              // localStorage.setItem("email", response.data.email);
+              // setLoggedin(isAuth());
               setPopup({
                 open: true,
                 severity: "success",
-                // message: "Sign-Up Successful!",
-                message: "Signed up & Logged in successfully",
+                message:
+                  "Sign-Up Successful! Go to your e-mail to authenticate!",
+                // message: "Signed up & Logged in successfully",
               });
             })
             .catch((err) => {
@@ -326,17 +332,23 @@ const Login = (props) => {
         .post(apiList.signup, updatedDetails)
         .then((response) => {
           axios
-            .post(apiList.signupmail, { email: response.data.email })
+            .post(apiList.signupmail, {
+              email: response.data.email,
+              token: response.data.token,
+              server: apiList.authmail,
+              userId: response.data.userId,
+            })
             .then((res) => {
-              localStorage.setItem("token", response.data.token);
-              localStorage.setItem("type", response.data.type);
-              localStorage.setItem("email", response.data.email);
-              setLoggedin(isAuth());
+              // localStorage.setItem("token", response.data.token);
+              // localStorage.setItem("type", response.data.type);
+              // localStorage.setItem("email", response.data.email);
+              // setLoggedin(isAuth());
               setPopup({
                 open: true,
                 severity: "success",
-                // message: "Sign-Up Successful!",
-                message: "Signed up & Logged in successfully",
+                message:
+                  "Sign-Up Successful! Go to your e-mail to authenticate!",
+                // message: "Signed up & Logged in successfully",
               });
             })
             .catch((err) => {
