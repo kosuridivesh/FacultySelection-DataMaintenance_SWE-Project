@@ -240,15 +240,29 @@ const Login = (props) => {
       axios
         .post(apiList.signup, updatedDetails)
         .then((response) => {
-          // localStorage.setItem("token", response.data.token);
-          // localStorage.setItem("type", response.data.type);
-          // setLoggedin(isAuth());
-          setPopup({
-            open: true,
-            severity: "success",
-            message: "Sign-Up Successful! Please authenticate your e-mail!",
-            // message: "Logged in successfully",
-          });
+          axios
+            .post(apiList.signupmail, { email: response.data.email })
+            .then((res) => {
+              localStorage.setItem("token", response.data.token);
+              localStorage.setItem("type", response.data.type);
+              localStorage.setItem("email", response.data.email);
+              setLoggedin(isAuth());
+              setPopup({
+                open: true,
+                severity: "success",
+                // message: "Sign-Up Successful!",
+                message: "Signed up & Logged in successfully",
+              });
+            })
+            .catch((err) => {
+              setPopup({
+                open: true,
+                severity: "error",
+                message: err.response.data.message,
+              });
+              console.log(err.response);
+            });
+
           // console.log(response);
         })
         .catch((err) => {
@@ -305,21 +319,35 @@ const Login = (props) => {
       return tmpErrorHandler[obj].error;
     });
 
-    // console.log(updatedDetails);
+    console.log(updatedDetails);
 
     if (verified) {
       axios
         .post(apiList.signup, updatedDetails)
         .then((response) => {
-          // localStorage.setItem("token", response.data.token);
-          // localStorage.setItem("type", response.data.type);
-          // setLoggedin(isAuth());
-          setPopup({
-            open: true,
-            severity: "success",
-            message: "Sign-Up Successful! Please authenticate your e-mail!",
-            // message: "Logged in successfully",
-          });
+          axios
+            .post(apiList.signupmail, { email: response.data.email })
+            .then((res) => {
+              localStorage.setItem("token", response.data.token);
+              localStorage.setItem("type", response.data.type);
+              localStorage.setItem("email", response.data.email);
+              setLoggedin(isAuth());
+              setPopup({
+                open: true,
+                severity: "success",
+                // message: "Sign-Up Successful!",
+                message: "Signed up & Logged in successfully",
+              });
+            })
+            .catch((err) => {
+              setPopup({
+                open: true,
+                severity: "error",
+                message: err.response.data.message,
+              });
+              console.log(err.response);
+            });
+
           // console.log(response);
         })
         .catch((err) => {

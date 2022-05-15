@@ -55,6 +55,7 @@ router.post("/signup", (req, res) => {
           const token = jwt.sign({ _id: user._id }, authKeys.jwtSecretKey);
           res.json({
             token: token,
+            email: data.email,
             type: user.type,
           });
         })

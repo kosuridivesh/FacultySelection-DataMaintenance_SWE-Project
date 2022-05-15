@@ -26,14 +26,11 @@ const sendmail = async (email, testLink) => {
       from: "facultyportal05@gmail.com",
       to: email,
       subject: "FacOutLook - Shortlisted",
-      html: `<p>Your Test Link is ${testLink}</p>`,
+      html: `<p>You have been shortlisted. Your Test Link is ${testLink}</p>`,
     };
     transporter.sendMail(mailOptions);
   } catch (error) {
-    res.json({
-      status: "Failed",
-      message: error.message,
-    });
+    console.log(error.message);
   }
 };
 
@@ -42,6 +39,34 @@ router.post("/sendmail", (req, res) => {
   const testLink = req.body.testLink;
   try {
     sendmail(email, testLink);
+    res.json({});
+  } catch (error) {
+    res.json({
+      status: "Failed",
+      message: error.message,
+    });
+  }
+});
+
+const signupmail = async (email) => {
+  try {
+    const mailOptions = {
+      from: "facultyportal05@gmail.com",
+      to: email,
+      subject: "FacOutLook - Registration",
+      html: `<h4>Your account for ${email} has been created!</h4>
+            <p>-From Team FacOutLook</p>`,
+    };
+    transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+router.post("/signupmail", (req, res) => {
+  let email = req.body.email;
+  try {
+    signupmail(email);
     res.json({});
   } catch (error) {
     res.json({
@@ -61,10 +86,7 @@ const sendaccmail = async (email, message) => {
     };
     transporter.sendMail(mailOptions);
   } catch (error) {
-    res.json({
-      status: "Failed",
-      message: error.message,
-    });
+    console.log(error.message);
   }
 };
 

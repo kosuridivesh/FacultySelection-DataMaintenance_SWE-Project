@@ -18,7 +18,6 @@ mongoose
   .then((res) => console.log("Connected to Atlas DB!"))
   .catch((err) => console.log(err));
 
-// MongoDB
 // mongoose
 //   .connect("mongodb://localhost:27017/facultySelection", {
 //     useNewUrlParser: true,
