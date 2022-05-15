@@ -263,7 +263,7 @@ const FilterPopup = (props) => {
                   </IconButton>
                 </Grid>
               </Grid>
-              <Grid
+              {/* <Grid
                 item
                 container
                 xs={4}
@@ -319,7 +319,7 @@ const FilterPopup = (props) => {
                     )}
                   </IconButton>
                 </Grid>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
 
@@ -903,10 +903,10 @@ const JobApplications = (props) => {
         status: true,
         desc: true,
       },
-      "jobApplicant.rating": {
-        status: false,
-        desc: false,
-      },
+      // "jobApplicant.rating": {
+      //   status: false,
+      //   desc: false,
+      // },
     },
   });
 

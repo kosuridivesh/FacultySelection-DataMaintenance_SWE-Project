@@ -5,27 +5,40 @@ const passportConfig = require("./lib/passportConfig");
 const cors = require("cors");
 const fs = require("fs");
 
-// MongoDB
+const DB =
+  "mongodb+srv://facoutlook:facoutlook@cluster0.nnblj.mongodb.net/facultySelection?retryWrites=true&w=majority";
+
 mongoose
-  .connect("mongodb://localhost:27017/facultySelection", {
+  .connect(DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false,
   })
-  .then((res) => console.log("Connected to DB"))
+  .then((res) => console.log("Connected to Atlas DB!"))
   .catch((err) => console.log(err));
 
+// MongoDB
+// mongoose
+//   .connect("mongodb://localhost:27017/facultySelection", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//     useCreateIndex: true,
+//     useFindAndModify: false,
+//   })
+//   .then((res) => console.log("Connected to DB"))
+//   .catch((err) => console.log(err));
+
 // initialising directories
-if (!fs.existsSync("./public")) {
-  fs.mkdirSync("./public");
-}
-if (!fs.existsSync("./public/resume")) {
-  fs.mkdirSync("./public/resume");
-}
-if (!fs.existsSync("./public/profile")) {
-  fs.mkdirSync("./public/profile");
-}
+// if (!fs.existsSync("./public")) {
+//   fs.mkdirSync("./public");
+// }
+// if (!fs.existsSync("./public/resume")) {
+//   fs.mkdirSync("./public/resume");
+// }
+// if (!fs.existsSync("./public/profile")) {
+//   fs.mkdirSync("./public/profile");
+// }
 
 const app = express();
 const port = 4444;

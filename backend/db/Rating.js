@@ -32,4 +32,4 @@ let schema = new mongoose.Schema(
 
 schema.index({ category: 1, receiverId: 1, senderId: 1 }, { unique: true });
 
-module.exports = mongoose.model("ratings", schema);
+// module.exports = mongoose.model("ratings", schema);

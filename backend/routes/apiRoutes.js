@@ -8,7 +8,7 @@ const JobApplicant = require("../db/JobApplicant");
 const Recruiter = require("../db/Recruiter");
 const Job = require("../db/Job");
 const Application = require("../db/Application");
-const Rating = require("../db/Rating");
+// const Rating = require("../db/Rating");
 
 const router = express.Router();
 
@@ -107,7 +107,7 @@ router.post("/jobs", jwtAuth, (req, res) => {
     jobType: data.jobType,
     duration: data.duration,
     salary: data.salary,
-    rating: data.rating,
+    // rating: data.rating,
   });
 
   job
