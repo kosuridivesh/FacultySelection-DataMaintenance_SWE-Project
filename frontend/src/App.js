@@ -20,6 +20,7 @@ import { userType } from "./lib/isAuth";
 const useStyles = makeStyles((theme) => ({
   body: {
     margin: "0px 0px",
+    position: "relative",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",

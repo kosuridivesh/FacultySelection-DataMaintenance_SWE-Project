@@ -22,7 +22,7 @@ import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 
 import { SetPopupContext } from "../../App";
 
-import apiList, { server } from "../../lib/apiList";
+import apiList from "../../lib/apiList";
 
 const gcpserver = "https://storage.googleapis.com/arvindbucketforse";
 
@@ -366,7 +366,7 @@ const ApplicationTile = (props) => {
 
   const handleApply = (status) => {
     // console.log(job._id);
-    console.log(sop);
+    // console.log(sop);
     axios
       .post(
         apiList.rec,
@@ -378,11 +378,11 @@ const ApplicationTile = (props) => {
         { userId: application.userId }
       )
       .then((response) => {
-        console.log("res", response.data.email);
+        // console.log("res", response.data.email);
         let em = response.data.email;
         setEmail(response.data.email);
-        console.log("state", emailid);
-        console.log("hey", em);
+        // console.log("state", emailid);
+        // console.log("hey", em);
         const sendData = {
           email: em,
           message: sop,
@@ -444,58 +444,6 @@ const ApplicationTile = (props) => {
         });
         console.log(err.response);
       });
-    // handleClose();
-    // try {
-    //   // const otp = (Math.floor(1000 + Math.random()*9000));
-    //   const mailOptions = {
-    //     from: "facultyportal05@gmail.com",
-    //     to: "arvindram25@gmail.com",
-    //     subject: "Account Created",
-    //     html: `<p>Hello hi bye</p>`,
-    //   };
-    //   transporter.sendMail(mailOptions);
-    // } catch (error) {
-    //   setPopup({
-    //     open: true,
-    //     severity: "failed",
-    //     message: error.message,
-    //   });
-    // }
-    // setPopup({
-    //   open: true,
-    //   severity: "success",
-    //   message: sop,
-    // });
-
-    // axios
-    //   .post(
-    //     `${apiList.jobs}/${job._id}/applications`,
-    //     {
-    //       sop: sop,
-    //     },
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //       },
-    //     }
-    //   )
-    //   .then((response) => {
-    //     setPopup({
-    //       open: true,
-    //       severity: "success",
-    //       message: response.data.message,
-    //     });
-    //     handleClose();
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.response);
-    //     setPopup({
-    //       open: true,
-    //       severity: "error",
-    //       message: err.response.data.message,
-    //     });
-    //     handleClose();
-    //   });
   };
 
   const getResume = () => {
@@ -534,7 +482,7 @@ const ApplicationTile = (props) => {
   };
 
   const updateStatus = (status) => {
-    console.log(testLink);
+    // console.log(testLink);
     axios
       .post(
         apiList.rec,
@@ -546,11 +494,11 @@ const ApplicationTile = (props) => {
         { userId: application.userId }
       )
       .then((response) => {
-        console.log(response.data.email);
+        // console.log(response.data.email);
         let em = response.data.email;
         setEmail(response.data.email);
-        console.log(emailid);
-        console.log("hey", em);
+        // console.log(emailid);
+        // console.log("hey", em);
         const sendData = {
           email: em,
           testLink: testLink,

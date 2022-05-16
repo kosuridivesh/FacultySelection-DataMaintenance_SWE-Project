@@ -16,6 +16,7 @@ import FaceIcon from "@material-ui/icons/Face";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 
+import { useHistory, Link } from "react-router-dom";
 import PasswordInput from "../lib/PasswordInput";
 import EmailInput from "../lib/EmailInput";
 import FileUploadInput from "../lib/FileUploadInput";
@@ -194,6 +195,7 @@ const Login = (props) => {
     });
   };
 
+  let history = useHistory();
   const handleLogin = () => {
     const tmpErrorHandler = {};
     Object.keys(inputErrorHandler).forEach((obj) => {
@@ -252,6 +254,7 @@ const Login = (props) => {
               // localStorage.setItem("type", response.data.type);
               // localStorage.setItem("email", response.data.email);
               // setLoggedin(isAuth());
+              history.push("/login");
               setPopup({
                 open: true,
                 severity: "success",
@@ -343,6 +346,7 @@ const Login = (props) => {
               // localStorage.setItem("type", response.data.type);
               // localStorage.setItem("email", response.data.email);
               // setLoggedin(isAuth());
+              history.push("/login");
               setPopup({
                 open: true,
                 severity: "success",

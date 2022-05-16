@@ -1,5 +1,5 @@
-// export const server = "http://34.145.171.118:4444";
-export const server = "http://localhost:4444";
+export const server = "http://34.145.171.118:4444";
+// export const server = "http://localhost:4444";
 
 const apiList = {
   login: `${server}/auth/login`,
@@ -16,6 +16,7 @@ const apiList = {
   user: `${server}/api/user`,
   applicants: `${server}/api/applicants`,
   rec: `${server}/api/something`,
+  createExcel: `${server}/api/createExcel`,
 };
 
 export default apiList;

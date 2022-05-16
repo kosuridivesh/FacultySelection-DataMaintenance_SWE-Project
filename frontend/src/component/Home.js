@@ -127,7 +127,11 @@ const JobTile = (props) => {
 
           <Grid item>
             {job.skillsets.map((skill) => (
-              <Chip label={skill} style={{ marginRight: "2px" }} />
+              <Chip
+                key={Math.random()}
+                label={skill}
+                style={{ marginRight: "2px" }}
+              />
             ))}
           </Grid>
         </Grid>
@@ -692,8 +696,8 @@ const Home = (props) => {
         <Grid
           container
           item
-          xs={24}
-          spacing={24}
+          xs={12}
+          spacing={10}
           direction="row"
           alignItems="stretch"
           justify="center"
@@ -701,8 +705,8 @@ const Home = (props) => {
           {jobs.length > 0 ? (
             jobs.map((job) => {
               return (
-                <Grid item xs={5}>
-                  <JobTile job={job} />
+                <Grid item xs={5} key={job._id}>
+                  <JobTile job={job} key={job._id} />
                 </Grid>
               );
             })

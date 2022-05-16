@@ -8,25 +8,25 @@ const fs = require("fs");
 const DB =
   "mongodb+srv://facoutlook:facoutlook@cluster0.nnblj.mongodb.net/facultySelection?retryWrites=true&w=majority";
 
-// mongoose
-//   .connect(DB, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     useCreateIndex: true,
-//     useFindAndModify: false,
-//   })
-//   .then((res) => console.log("Connected to Atlas DB!"))
-//   .catch((err) => console.log(err));
-
 mongoose
-  .connect("mongodb://localhost:27017/facultySelection", {
+  .connect(DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false,
   })
-  .then((res) => console.log("Connected to DB"))
+  .then((res) => console.log("Connected to Atlas DB!"))
   .catch((err) => console.log(err));
+
+// mongoose
+//   .connect("mongodb://localhost:27017/facultySelection", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//     useCreateIndex: true,
+//     useFindAndModify: false,
+//   })
+//   .then((res) => console.log("Connected to DB"))
+//   .catch((err) => console.log(err));
 
 // initialising directories
 // if (!fs.existsSync("./public")) {
