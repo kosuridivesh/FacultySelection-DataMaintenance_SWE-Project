@@ -1,0 +1,56 @@
+{
+  "name": "multer",
+  "description": "Middleware for handling `multipart/form-data`.",
+  "version": "2.0.0-rc.2",
+  "contributors": [
+    "Hage Yaapa <captain@hacksparrow.com> (http://www.hacksparrow.com)",
+    "Jaret Pfluger <https://github.com/jpfluger>",
+    "Linus Unnebäck <linus@folkdatorn.se>"
+  ],
+  "license": "MIT",
+  "repository": "expressjs/multer",
+  "keywords": [
+    "form",
+    "post",
+    "multipart",
+    "form-data",
+    "formdata",
+    "express",
+    "middleware"
+  ],
+  "dependencies": {
+    "append-field": "^1.0.0",
+    "busboy": "^0.3.1",
+    "bytes": "^3.1.0",
+    "fs-temp": "^1.1.1",
+    "has-own-property": "^1.0.0",
+    "on-finished": "^2.3.0",
+    "pify": "^5.0.0",
+    "pump": "^3.0.0",
+    "stream-file-type": "^0.4.0",
+    "type-is": "^1.6.18"
+  },
+  "devDependencies": {
+    "assert-rejects": "^1.0.0",
+    "express": "^4.16.4",
+    "form-data": "^3.0.0",
+    "get-stream": "^5.1.0",
+    "hasha": "^5.2.0",
+    "mocha": "^7.1.0",
+    "nyc": "^15.0.0",
+    "recursive-nullify": "^1.0.0",
+    "standard": "^14.3.3",
+    "testdata-w3c-json-form": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=10.13"
+  },
+  "files": [
+    "LICENSE",
+    "index.js",
+    "lib/"
+  ],
+  "scripts": {
+    "test": "standard && nyc --check-coverage --statements 100 mocha"
+  }
+}
